@@ -9,10 +9,11 @@ export function SupabaseProvider({ children }: { children: ReactNode }) {
   const setLoading = useAuthStore((state) => state.setLoading)
 
   useEffect(() => {
-    const supabase = createClient()
+    const supabase = createClient() as any
 
     // Get initial session
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    supabase.auth.getSession().then(({ data }: { data: { session: any } }) => {
+      const session = data.session
       if (session?.user) {
         setUser({
           id: session.user.id,
@@ -28,7 +29,7 @@ export function SupabaseProvider({ children }: { children: ReactNode }) {
     // Listen for auth changes
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
+    } = supabase.auth.onAuthStateChange((_event: string, session: any) => {
       if (session?.user) {
         setUser({
           id: session.user.id,
